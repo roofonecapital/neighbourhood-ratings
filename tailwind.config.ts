@@ -11,6 +11,9 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'roofone-green-bg': '#A3C64F',
+        'roofone-green-primary': "#9FC131",
+        'roofone-secondary':"#0D98BA"
       },
     },
   },
