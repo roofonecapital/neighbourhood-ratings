@@ -1,4 +1,4 @@
-import RatingOverview from "../components/rating-overview"
+import RatingOverview from "../components/ratingOverview"
 
 const copy = {
     heroMain: "A better way to rate neighbourhoods in the UK.",
