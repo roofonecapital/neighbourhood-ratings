@@ -1,103 +1,260 @@
-import Image from "next/image";
+"use client";
+import StarRating from "./components/rating";
+import PlaceCard from "./components/ratingOverview";
+import Search from "./components/search";
+import { useEffect, useState, useRef } from "react";
+import { PlacesApi } from "../lib/placesApi";
+import { Oval } from "react-loader-spinner";
 
-export default function Home() {
+// Education, Health care/fitness, Banks, Food, Entertainment, Shopping, transport
+const includedTypes = [
+  "school",
+  "library",
+  "primary_school",
+  "secondary_school",
+  "gym",
+  "fitness_centre",
+  "hospital",
+  "pharmacy",
+  "spa",
+  "bank",
+  "atm",
+  "restaurant",
+  "bar",
+  "playground",
+  "supermarket",
+  "clothing_store",
+  "bus_stop",
+  "train_station",
+];
+
+const copy = {
+  heroMain: "A better way to rate neighbourhoods in the UK.",
+  heroSubCopy:
+    "Don’t struggle thinking about neighbourhoods when you’ve got Roofone.",
+};
+
+const ratingData = {
+  rating: "0.00",
+  id: "901293",
+  bank: 5,
+  hotel: 3,
+  pharmacy: 4,
+  hospital: 5,
+  restaurant: 9,
+  police: 0,
+  bar: 56,
+  fire_station: 0,
+  school: 10,
+  supermarket: 10,
+  gym: 10,
+  mosque: 0,
+  church: 0,
+  spa: 0,
+  atm: 2,
+  car_wash: 0,
+};
+
+const ratingDataArray = [
+  {
+    name: "School",
+    image: "/school-rating.jpg",
+    places: [{ school: ratingData.school }],
+  },
+  {
+    name: "Health care",
+    image: "/school-rating.jpg",
+    places: [
+      { gym: ratingData.gym },
+      { hostpital: ratingData.hospital },
+      { pharmacy: ratingData.pharmacy },
+      { spa: ratingData.spa },
+    ],
+  },
+  {
+    name: "Banks",
+    image: "/school-rating.jpg",
+    places: [{ bank: ratingData.bank }, { atm: ratingData.atm }],
+  },
+  {
+    name: "Food",
+    image: "/school-rating.jpg",
+    places: [{ restaurant: ratingData.restaurant }, { bar: ratingData.bar }],
+  },
+  {
+    name: "Shopping",
+    image: "/school-rating.jpg",
+    places: [{ supermarket: ratingData.supermarket }],
+  },
+];
+
+export default function NeigbourhoodRating() {
+  const [userInput, setUserInput] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const ratingResultsRef = useRef<HTMLDivElement | null>(null);
+
+  const handleGetPlaceDetails = (placeId: string) => {
+    /**
+     * when a user clicks on a suggested address:
+     *  - display loading ui
+     *  - use the placeId for that address to get the full place details
+     *  - use the long/lat from the full place details to do a nearby search
+     *  - calculate rating
+     *  - remove loading ui
+     *  - display rating info
+     */
+    async function placeDetails(params: unknown) {
+      setIsLoading(true);
+      try {
+        const res = await PlacesApi.get(
+          `places/${placeId}?fields=location,formattedAddress`
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error("Failed to get place details");
+        console.log("Received place details:", data);
+        console.log(
+          "Received place details (log and lat):",
+          data.location.latitude,
+          data.location.longitude
+        );
+        // get nearby places
+        nearbySearch(data.location);
+        const loadingState = setTimeout(() => setIsLoading(false), 2000);
+        return () => clearTimeout(loadingState);
+      } catch {}
+    }
+
+    async function nearbySearch(data: { latitude: number; longitude: number }) {
+      const queryBody = {
+        maxResultCount: 10,
+        includedTypes: includedTypes,
+        includedRegionCodes: ["uk"],
+        locationResctriction: {
+          circle: {
+            center: {
+              latitude: data.latitude,
+              longitude: data.longitude,
+            },
+            radius: 500.0,
+          },
+        },
+      };
+
+      try {
+        const res = await PlacesApi.post("places:searchNearby", queryBody, [
+          "places.displayName",
+          "places.formattedAddress",
+        ]);
+        const data = await res.json();
+        if (!res.ok) throw new Error("Failed to get nearby places");
+        console.log("Received nearby places:", data);
+      } catch {}
+    }
+    placeDetails(placeId);
+  };
+
+  const executeScrollToRatingsResults = () =>
+    ratingResultsRef.current?.scrollIntoView();
+
   return (
     <>
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="bg-roofone-green-bg/30 h-screen">
+            <div className="text-center pt-8">
+              <div className="px-12 lg:px-64">
+                <h1 className="text-wrap text-3xl font-semibold tracking-tight text-gray-900 md:text-6xl">
+                  {copy.heroMain}
+                </h1>
+              </div>
+              <p className="mt-6 px-8 text-pretty text-md font-medium text-gray-500 md:mt-8 md:text-xl/8">
+                {copy.heroSubCopy}
+              </p>
+              {/*Autocomplete search input */}
+              <Search
+                userInput={userInput}
+                setUserInput={setUserInput}
+                handleGetPlaceDetails={handleGetPlaceDetails}
+              />
+            </div>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <div ref={ratingResultsRef}>
+            <RatingResults />
+          </div>
+        </>
+      )}
     </>
+  );
+}
+
+function RatingResults() {
+  return (
+    <>
+      <div className="text-center p-5">
+        <h1 className="text-xl sm:text-2xl">
+          Voila Here’s what neighbourhood of HA9 7LL feels like
+        </h1>
+      </div>
+      <div className="flex flex-col gap-12 justify-center items-center">
+        <div className="flex flex-col sm:flex-row justify-start sm:justify-between items-start sm:items-center w-3/4 px-12">
+          <div className="flex flex-col gap-1">
+            <p className="text-xl block">Neigborhood Rating</p>
+            <StarRating
+              maxRating={5}
+              size={48}
+              showRatingValue={false}
+              ratingValue={5}
+            />
+            <span>Learn more</span>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-roofone-secondary px-2.5 py-1.5 text-sm font-semibold w-48 h-11 text-white shadow-sm hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Share this rating
+            </button>
+            <span>Help us improve this rating</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 items-center justify-center">
+          <div className="text-xl text-left">Neigborhood Overview </div>
+          <div className="flex flex-col lg:flex-row gap-4 lg:px-56">
+            {ratingDataArray.map((ratingDataArray) => (
+              <PlaceCard
+                name={ratingDataArray.name}
+                image={ratingDataArray.image}
+                places={ratingDataArray.places}
+                key={ratingDataArray.name}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Loading() {
+  const loaderClass = {
+    position: "absolute",
+    left: "45%",
+    top: "45%",
+  };
+  return (
+    <Oval
+      visible={true}
+      height="100"
+      width="100"
+      ariaLabel="oval-loading"
+      wrapperStyle={loaderClass}
+      wrapperClass="magnifying-glass-wrapper"
+      color="#9FC131"
+    />
   );
 }
