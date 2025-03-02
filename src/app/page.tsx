@@ -1,10 +1,36 @@
+"use client";
 import StarRating from "./components/rating";
 import PlaceCard from "./components/ratingOverview";
 import Search from "./components/search";
+import { useEffect, useState, useRef } from "react";
+import { PlacesApi } from "../lib/placesApi";
+import { Oval } from "react-loader-spinner";
+
+// Education, Health care/fitness, Banks, Food, Entertainment, Shopping, transport
+const includedTypes = [
+  "school",
+  "library",
+  "primary_school",
+  "secondary_school",
+  "gym",
+  "fitness_centre",
+  "hospital",
+  "pharmacy",
+  "spa",
+  "bank",
+  "atm",
+  "restaurant",
+  "bar",
+  "playground",
+  "supermarket",
+  "clothing_store",
+  "bus_stop",
+  "train_station",
+];
 
 const copy = {
   heroMain: "A better way to rate neighbourhoods in the UK.",
-  heroSsubCopy:
+  heroSubCopy:
     "Don’t struggle thinking about neighbourhoods when you’ve got Roofone.",
 };
 
@@ -63,21 +89,110 @@ const ratingDataArray = [
 ];
 
 export default function NeigbourhoodRating() {
+  const [userInput, setUserInput] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const ratingResultsRef = useRef<HTMLDivElement | null>(null);
+
+  const handleGetPlaceDetails = (placeId: string) => {
+    /**
+     * when a user clicks on a suggested address:
+     *  - display loading ui
+     *  - use the placeId for that address to get the full place details
+     *  - use the long/lat from the full place details to do a nearby search
+     *  - calculate rating
+     *  - remove loading ui
+     *  - display rating info
+     */
+    async function placeDetails(params: unknown) {
+      setIsLoading(true);
+      try {
+        const res = await PlacesApi.get(
+          `places/${placeId}?fields=location,formattedAddress`
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error("Failed to get place details");
+        console.log("Received place details:", data);
+        console.log(
+          "Received place details (log and lat):",
+          data.location.latitude,
+          data.location.longitude
+        );
+        // get nearby places
+        nearbySearch(data.location);
+        const loadingState = setTimeout(() => setIsLoading(false), 2000);
+        return () => clearTimeout(loadingState);
+      } catch {}
+    }
+
+    async function nearbySearch(data: { latitude: number; longitude: number }) {
+      const queryBody = {
+        maxResultCount: 10,
+        includedTypes: includedTypes,
+        includedRegionCodes: ["uk"],
+        locationResctriction: {
+          circle: {
+            center: {
+              latitude: data.latitude,
+              longitude: data.longitude,
+            },
+            radius: 500.0,
+          },
+        },
+      };
+
+      try {
+        const res = await PlacesApi.post("places:searchNearby", queryBody, [
+          "places.displayName",
+          "places.formattedAddress",
+        ]);
+        const data = await res.json();
+        if (!res.ok) throw new Error("Failed to get nearby places");
+        console.log("Received nearby places:", data);
+      } catch {}
+    }
+    placeDetails(placeId);
+  };
+
+  const executeScrollToRatingsResults = () =>
+    ratingResultsRef.current?.scrollIntoView();
+
   return (
     <>
-      <div className="bg-roofone-green-bg/30 h-96">
-        <div className="text-center pt-8">
-          <div className="px-12 lg:px-64">
-            <h1 className="text-wrap text-3xl font-semibold tracking-tight text-gray-900 md:text-6xl">
-              {copy.heroMain}
-            </h1>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="bg-roofone-green-bg/30 h-screen">
+            <div className="text-center pt-8">
+              <div className="px-12 lg:px-64">
+                <h1 className="text-wrap text-3xl font-semibold tracking-tight text-gray-900 md:text-6xl">
+                  {copy.heroMain}
+                </h1>
+              </div>
+              <p className="mt-6 px-8 text-pretty text-md font-medium text-gray-500 md:mt-8 md:text-xl/8">
+                {copy.heroSubCopy}
+              </p>
+              {/*Autocomplete search input */}
+              <Search
+                userInput={userInput}
+                setUserInput={setUserInput}
+                handleGetPlaceDetails={handleGetPlaceDetails}
+              />
+            </div>
           </div>
-          <p className="mt-6 px-8 text-pretty text-md font-medium text-gray-500 md:mt-8 md:text-xl/8">
-            {copy.heroSsubCopy}
-          </p>
-          <Search />
-        </div>
-      </div>
+
+          <div ref={ratingResultsRef}>
+            <RatingResults />
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
+function RatingResults() {
+  return (
+    <>
       <div className="text-center p-5">
         <h1 className="text-xl sm:text-2xl">
           Voila Here’s what neighbourhood of HA9 7LL feels like
@@ -122,5 +237,24 @@ export default function NeigbourhoodRating() {
         </div>
       </div>
     </>
+  );
+}
+
+function Loading() {
+  const loaderClass = {
+    position: "absolute",
+    left: "45%",
+    top: "45%",
+  };
+  return (
+    <Oval
+      visible={true}
+      height="100"
+      width="100"
+      ariaLabel="oval-loading"
+      wrapperStyle={loaderClass}
+      wrapperClass="magnifying-glass-wrapper"
+      color="#9FC131"
+    />
   );
 }
