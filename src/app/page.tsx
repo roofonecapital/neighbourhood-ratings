@@ -3,6 +3,8 @@ import StarRating from "./components/rating";
 import PlaceCard from "./components/ratingOverview";
 import Search from "./components/search";
 import { useEffect, useState, useRef } from "react";
+import { PLACES } from "../lib/places";
+import { chunks, Place } from "../lib/helpers";
 import { PlacesApi } from "../lib/placesApi";
 import { Oval } from "react-loader-spinner";
 
@@ -13,7 +15,6 @@ const includedTypes = [
   "primary_school",
   "secondary_school",
   "gym",
-  "fitness_centre",
   "hospital",
   "pharmacy",
   "spa",
@@ -22,6 +23,7 @@ const includedTypes = [
   "restaurant",
   "bar",
   "playground",
+  "park",
   "supermarket",
   "clothing_store",
   "bus_stop",
@@ -29,9 +31,9 @@ const includedTypes = [
 ];
 
 const copy = {
-  heroMain: "A better way to rate neighbourhoods in the UK.",
+  heroMain: "What's a neighbourhood like?",
   heroSubCopy:
-    "Don’t struggle thinking about neighbourhoods when you’ve got Roofone.",
+    "Find out what the area is like, what amenities are available and what people think of the area.",
 };
 
 const ratingData = {
@@ -93,7 +95,7 @@ export default function NeigbourhoodRating() {
   const [isLoading, setIsLoading] = useState(false);
   const ratingResultsRef = useRef<HTMLDivElement | null>(null);
 
-  const handleGetPlaceDetails = (placeId: string) => {
+  const handleCalculateRating = (placeId: string) => {
     /**
      * when a user clicks on a suggested address:
      *  - display loading ui
@@ -103,7 +105,10 @@ export default function NeigbourhoodRating() {
      *  - remove loading ui
      *  - display rating info
      */
-    async function placeDetails(params: unknown) {
+
+    const placeCount = {};
+    // Get place details -> returns lat and long
+    async function getPlaceDetails(params: unknown) {
       setIsLoading(true);
       try {
         const res = await PlacesApi.get(
@@ -117,44 +122,82 @@ export default function NeigbourhoodRating() {
           data.location.latitude,
           data.location.longitude
         );
-        // get nearby places
-        nearbySearch(data.location);
+        //
+        fetchPlaceData(data.location);
         const loadingState = setTimeout(() => setIsLoading(false), 2000);
         return () => clearTimeout(loadingState);
       } catch {}
     }
 
-    async function nearbySearch(data: { latitude: number; longitude: number }) {
+    getPlaceDetails(placeId);
+
+    const fetchPlaceData = async (location: { lat: number; lng: number }) => {
+      const { lat, lng } = location;
+      let cummulativeScore = 0;
+      /**
+      - Breakdown the array of PLACES into chunks of 9:8 (total of 17 places)
+      - For each chunk item, call the nearbySearch API in parrellel
+      - Calculate the weighted score for each chunk item (count * rank)
+      - add the weighted score to the cummulative score
+      - add the count of the place to the placeCount object
+      - Repeat the process for the next chunk
+      - Finally, return the cummulative score and placeCount object
+      **/
+      console.log("Location", location, "Places", PLACES);
+      const chunkedPlaces = chunks(PLACES);
+      console.log("Chunked Places", chunkedPlaces);
+      const promises = chunkedPlaces.map((chunk) => {
+        console.log("Chunk", chunk);
+        return Promise.all(
+          chunk.map((place: any) => {
+            return getNearbySearchPlaceInfo(place, lat, lng, 0);
+          })
+        );
+      });
+
+      const results = await Promise.all(promises);
+      console.log("Promise Results", results);
+    };
+
+    async function getNearbySearchPlaceInfo(
+      place: Place,
+      lat?: number,
+      lng?: number,
+      length?: number,
+      cb = (total: number) => {}
+    ) {
+      console.log("Place Object", place);
       const queryBody = {
-        maxResultCount: 10,
-        includedTypes: includedTypes,
-        includedRegionCodes: ["uk"],
-        locationResctriction: {
+        includedTypes: place.name,
+        maxResultCount: place.max,
+        locationRestriction: {
           circle: {
             center: {
-              latitude: data.latitude,
-              longitude: data.longitude,
+              latitude: lat,
+              longitude: lng,
             },
-            radius: 500.0,
+            radius: 1500.0,
           },
         },
       };
 
-      try {
-        const res = await PlacesApi.post("places:searchNearby", queryBody, [
-          "places.displayName",
-          "places.formattedAddress",
-        ]);
-        const data = await res.json();
-        if (!res.ok) throw new Error("Failed to get nearby places");
-        console.log("Received nearby places:", data);
-      } catch {}
+      let total = length;
+      const res = await PlacesApi.post("places:searchNearby", queryBody, [
+        "places.primaryType",
+      ]);
+      const data = await res.json();
+      console.log("Received nearby places:", data);
+
+      return;
+      // total += data.places.length;
+      // console.log("Received nearby places:", data);
+      // if (!res.ok) throw new Error("Failed to get nearby places");
+      // return cb(total || 0);
     }
-    placeDetails(placeId);
   };
 
-  const executeScrollToRatingsResults = () =>
-    ratingResultsRef.current?.scrollIntoView();
+  // const executeScrollToRatingsResults = () =>
+  //   ratingResultsRef.current?.scrollIntoView();
 
   return (
     <>
@@ -169,21 +212,21 @@ export default function NeigbourhoodRating() {
                   {copy.heroMain}
                 </h1>
               </div>
-              <p className="mt-6 px-8 text-pretty text-md font-medium text-gray-500 md:mt-8 md:text-xl/8">
+              <p className="mt-6 px-48 text-pretty text-md font-medium text-gray-500 md:mt-8 md:text-xl/8">
                 {copy.heroSubCopy}
               </p>
               {/*Autocomplete search input */}
               <Search
                 userInput={userInput}
                 setUserInput={setUserInput}
-                handleGetPlaceDetails={handleGetPlaceDetails}
+                handleGetSelectedPlaceRating={handleCalculateRating}
               />
             </div>
           </div>
 
-          <div ref={ratingResultsRef}>
+          {/* <div ref={ratingResultsRef}>
             <RatingResults />
-          </div>
+          </div> */}
         </>
       )}
     </>

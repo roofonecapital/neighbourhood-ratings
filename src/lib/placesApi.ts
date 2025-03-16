@@ -8,6 +8,7 @@ export const PlacesApi = {
         fields?: Array<string>
     ) {
         const controller = new AbortController()
+        console.log("Fields", fields)
         return fetch(`https://places.googleapis.com/v1/${endpoint}`, {
         method,
         signal: controller.signal,
@@ -25,7 +26,7 @@ export const PlacesApi = {
     return this.request("get", path);
   },
 
-  post(path: string, body?: Record<string, any>, fields?: Array<string>) {
+    post(path: string, body?: Record<string, any>, fields?: Array<string>) {
     return this.request("post", path, body, fields);
   },
 };

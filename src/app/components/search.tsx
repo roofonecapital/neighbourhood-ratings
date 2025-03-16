@@ -23,13 +23,13 @@ const placesApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
 type SearchInputProps = {
   userInput: string;
   setUserInput: (userInput: string) => void;
-  handleGetPlaceDetails: (placeId: string) => void;
+  handleGetSelectedPlaceRating: (placeId: string) => void;
 };
 
 export default function Search({
   userInput,
   setUserInput,
-  handleGetPlaceDetails,
+  handleGetSelectedPlaceRating,
 }: SearchInputProps) {
   const [predictions, setPredictions] = useState<
     google.maps.places.AutocompleteSuggestion[]
@@ -38,6 +38,7 @@ export default function Search({
 
   function handleUserInput(userInput: string) {
     setUserInput(userInput);
+    // autocomplete
     async function fetchPredictions() {
       const queryBody = {
         input: userInput,
@@ -69,7 +70,7 @@ export default function Search({
       (prediction) => prediction.placePrediction?.placeId === placeId
     );
     setUserInput(String(selectedInput[0].placePrediction?.text.text));
-    handleGetPlaceDetails(placeId);
+    handleGetSelectedPlaceRating(placeId);
   };
 
   return (
