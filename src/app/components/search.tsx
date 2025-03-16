@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo, memo } from "react";
+import { useEffect, useState, useMemo, memo, useCallback } from "react";
 import {
   Command,
   CommandDialog,
@@ -12,54 +12,51 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { PlacesApi } from "../../lib/placesApi";
-
-/*
-Use UUID to generate a unique session ID.
-Debounce the input value to prevent the API from being called on every keystroke.
-*/
+import { debounce } from "@/lib/helpers";
 
 const placesApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
 
 type SearchInputProps = {
   userInput: string;
   setUserInput: (userInput: string) => void;
-  handleGetPlaceDetails: (placeId: string) => void;
+  handleGetSelectedPlaceRating: (placeId: string) => void;
 };
 
 export default function Search({
   userInput,
   setUserInput,
-  handleGetPlaceDetails,
+  handleGetSelectedPlaceRating,
 }: SearchInputProps) {
   const [predictions, setPredictions] = useState<
     google.maps.places.AutocompleteSuggestion[]
   >([]);
   const [isopen, setIsOpen] = useState(false);
 
-  function handleUserInput(userInput: string) {
-    setUserInput(userInput);
-    async function fetchPredictions() {
-      const queryBody = {
-        input: userInput,
-        includedRegionCodes: ["uk"],
-        includeQueryPredictions: true,
-      };
-      try {
-        // cancel current response (race condition*)
-        const res = await PlacesApi.post("places:autocomplete", queryBody);
-        const data = await res.json();
-        if (!res.ok) throw new Error("Failed to fetch predictions");
-        console.log("received suggestings ->", data.suggestions);
-        setPredictions(data.suggestions ?? []);
-        //setOpen(true);
-      } catch (error) {
-        // handle if no result exist
-        console.log(error);
-      }
-    }
-    if (userInput.length > 3) {
-      const getPredictions = setTimeout(fetchPredictions, 2000);
-      return () => clearTimeout(getPredictions);
+  const handleUserInput = useCallback(
+    debounce((input: string) => {
+      setUserInput(input);
+      fetchPredictions(input);
+    }, 1000),
+    []
+  );
+
+  async function fetchPredictions(input: string) {
+    const queryBody = {
+      input: input,
+      includedRegionCodes: ["uk"],
+      includeQueryPredictions: true,
+    };
+    try {
+      // cancel current response (race condition*)
+      const res = await PlacesApi.post("places:autocomplete", queryBody);
+      const data = await res.json();
+      if (!res.ok) throw new Error("Failed to fetch predictions");
+      console.log("received suggestings ->", data.suggestions);
+      setPredictions(data.suggestions ?? []);
+      //setOpen(true);
+    } catch (error) {
+      // handle if no result exist
+      console.log(error);
     }
   }
 
@@ -69,7 +66,7 @@ export default function Search({
       (prediction) => prediction.placePrediction?.placeId === placeId
     );
     setUserInput(String(selectedInput[0].placePrediction?.text.text));
-    handleGetPlaceDetails(placeId);
+    handleGetSelectedPlaceRating(placeId);
   };
 
   return (
@@ -82,7 +79,7 @@ export default function Search({
           >
             <CommandInput
               placeholder="Search by address or postcode"
-              value={userInput}
+              defaultValue={userInput}
               onValueChange={(v) => handleUserInput(v)}
               className="block w-[480px] h-[48px] -mr-16 text-base text-gray-900"
             />

@@ -25,7 +25,7 @@ export const PlacesApi = {
     return this.request("get", path);
   },
 
-  post(path: string, body?: Record<string, any>, fields?: Array<string>) {
+    post(path: string, body?: Record<string, any>, fields?: Array<string>) {
     return this.request("post", path, body, fields);
   },
 };
