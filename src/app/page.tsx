@@ -1,6 +1,6 @@
 "use client";
 import StarRating from "./components/rating";
-import PlaceCard from "./components/ratingOverview";
+import PlaceCard from "./components/placeCard";
 import Search from "./components/search";
 import { useEffect, useState, useRef } from "react";
 import { PLACES } from "../lib/places";
@@ -182,6 +182,7 @@ export default function NeigbourhoodRating() {
                      {/*Autocomplete search input */}
                      <Search
                         userInput={userInput}
+                        className="mt-8"
                         setUserInput={setUserInput}
                         handleGetSelectedPlaceRating={handleCalculateRating}
                      />
