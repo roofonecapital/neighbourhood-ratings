@@ -29,6 +29,7 @@ export default function Search({
       google.maps.places.AutocompleteSuggestion[]
    >([]);
    const [isopen, setIsOpen] = useState(false);
+   //console.log(predictions.length > 0 ? "True" : "False");
 
    const handleUserInput = useCallback(
       debounce((input: string) => {
@@ -49,17 +50,13 @@ export default function Search({
          const res = await PlacesApi.post("places:autocomplete", queryBody);
          const data = await res.json();
          if (!res.ok) throw new Error("Failed to fetch predictions");
-         console.log("received suggestings ->", data.suggestions);
          setPredictions(data.suggestions ?? []);
-         //setOpen(true);
       } catch (error) {
-         // handle if no result exist
          console.log(error);
       }
    }
 
    const handleSelectedPlace = (placeId: string) => {
-      // set UserInput
       const selectedInput = predictions.filter(
          (prediction) => prediction.placePrediction?.placeId === placeId
       );
@@ -82,7 +79,9 @@ export default function Search({
                      className="block w-[480px] h-[48px] -mr-16 text-base text-gray-900"
                   />
 
-                  <CommandList className={`${predictions ? "" : "hidden"}`}>
+                  <CommandList
+                     className={`${predictions.length > 0 ? "" : "hidden"}`}
+                  >
                      <CommandEmpty>No results found.</CommandEmpty>
                      <CommandGroup>
                         {predictions.map((prediction) => (
