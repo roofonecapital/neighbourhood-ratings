@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import Search from "./search";
 import { RatingResults } from "./RatingResults";
 import { Loading } from "./Loading";
@@ -8,17 +8,10 @@ import { PLACES } from "@/lib/places";
 import { Place } from "@/lib/helpers";
 import { PlacesApi } from "@/lib/placesApi";
 
-type NeighbourhoodRatingProps = {
-   userInput: string;
-   setUserInput: (userInput: string) => void;
-   handleGetSelectedPlaceRating: (placeId: string) => void;
-};
-
 export function NeigbourhoodRatingHero() {
    const [userInput, setUserInput] = useState<string>("");
    const [isLoading, setIsLoading] = useState(false);
-   const [rating, setRating] = useState<number>(0);
-
+   const [rating, setRating] = useState<number | null>(null);
    const [ratingData, setRatingData] = useState<Record<string, number>>({});
 
    const ratingDataArray = [
@@ -141,11 +134,10 @@ export function NeigbourhoodRatingHero() {
          "places.primaryType",
       ]);
       const data = await res.json();
-      //console.log("Received nearby search data for", place.name, data);
 
       return {
          name: place.name,
-         score: data.places?.length * place.rank,
+         score: data.places?.length * place.rank || 0,
          count: data.places?.length,
       };
    }
@@ -175,7 +167,7 @@ export function NeigbourhoodRatingHero() {
                   </div>
                </div>
 
-               {rating && (
+               {rating !== null && (
                   <div ref={(node) => node?.scrollIntoView()}>
                      <RatingResults
                         userInput={userInput}

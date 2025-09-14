@@ -30,21 +30,6 @@ export function RatingResults({
    ratingData,
    ratingDataArray,
 }: RatingResultsProps) {
-   const [isModalOpen, setModalOpen] = React.useState(false);
-
-   const handleShareClick = () => {
-      setModalOpen(true);
-   };
-
-   const handleCloseModal = () => {
-      setModalOpen(false);
-   };
-
-   const handleCopyLink = () => {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
-   };
-
    return (
       <>
          <div className="text-center p-5">
@@ -62,18 +47,15 @@ export function RatingResults({
                      showRatingValue={false}
                      ratingValue={rating}
                   />
-                  <span>Learn more</span>
                </div>
 
                <div className="flex flex-col gap-1">
-                  <button
-                     type="button"
-                     onClick={handleShareClick}
+                  <a
+                     href="mailto:olaitanodulaja@gmail.com"
                      className="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-roofone-secondary px-2.5 py-1.5 text-sm font-semibold w-48 h-11 text-white shadow-sm hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                     Share this rating
-                  </button>
-                  <span>Help us improve this rating</span>
+                     Help improve this rating
+                  </a>
                </div>
             </div>
 
@@ -91,38 +73,6 @@ export function RatingResults({
                </div>
             </div>
          </div>
-
-         {isModalOpen && (
-            <div className="modal">
-               <div className="modal-content">
-                  <span className="close" onClick={handleCloseModal}>
-                     &times;
-                  </span>
-                  <h2>Share this rating</h2>
-                  <button
-                     onClick={() =>
-                        window.open(
-                           `https://twitter.com/share?url=${window.location.href}`,
-                           "_blank"
-                        )
-                     }
-                  >
-                     Share on Twitter
-                  </button>
-                  <button
-                     onClick={() =>
-                        window.open(
-                           `https://www.linkedin.com/sharing/share-offsite/?url=${window.location.href}`,
-                           "_blank"
-                        )
-                     }
-                  >
-                     Share on LinkedIn
-                  </button>
-                  <button onClick={handleCopyLink}>Copy Link</button>
-               </div>
-            </div>
-         )}
       </>
    );
 }
