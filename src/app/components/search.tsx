@@ -42,7 +42,7 @@ export default function Search({
          includeQueryPredictions: true,
       };
       try {
-         // cancel current response (race condition*)
+         console.log("Fetching predictions for input:", input);
          const res = await PlacesApi.post("places:autocomplete", queryBody);
          const data = await res.json();
          if (!res.ok) throw new Error("Failed to fetch predictions");
