@@ -7,7 +7,7 @@ export const PLACES = [
   {
     name: "library",
     rank: 4,
-    max: 7,
+    max: 3,
   },
     {
     name: "bank",
@@ -22,7 +22,7 @@ export const PLACES = [
   {
     name: "restaurant",
     rank: 4,
-    max: 15,
+    max: 10,
     },
    {
     name: "bar",
@@ -43,7 +43,7 @@ export const PLACES = [
   {
     name: "pharmacy",
     rank: 5,
-    max: 15,
+    max: 10,
     },
    {
     name: "gym",
@@ -52,38 +52,38 @@ export const PLACES = [
     },
     {
     name: "spa",
-    rank: 4,
-    max: 7,
+    rank: 2,
+    max: 2,
     },
     {
     name: "playground",
     rank: 4,
-    max: 7,
+    max: 5,
   },
   {
     name: "supermarket",
     rank: 7,
-    max: 20,
+    max: 10,
   },
   {
     name: "clothing_store",
-    rank: 5,
-    max: 10,
+    rank: 4,
+    max: 17,
   },
   {
     name: "park",
     rank: 4,
-    max: 5,
+    max: 2,
   },
   {
     name: "bus_stop",
     rank: 7,
-    max: 20,
+    max: 5,
   },
   {
     name: "train_station",
     rank: 7,
-    max: 7,
+    max: 3,
   },
 ];
 

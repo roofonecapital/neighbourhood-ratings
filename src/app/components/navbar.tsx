@@ -17,7 +17,11 @@ export default function Navbar() {
             </Link>
          </div>
          <div>
-            <Link href="/" className="flex gap-2">
+            <Link
+               href="https://github.com/roofonecapital/neighbourhood-ratings"
+               target="_blank"
+               className="flex gap-2"
+            >
                <span className="sr-only">Github</span>
                <span>Github</span>
                <Image
