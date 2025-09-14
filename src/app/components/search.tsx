@@ -12,8 +12,6 @@ import {
 import { PlacesApi } from "../../lib/placesApi";
 import { debounce } from "@/lib/helpers";
 
-const placesApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
-
 type SearchInputProps = {
    userInput: string;
    setUserInput: (userInput: string) => void;
@@ -28,8 +26,6 @@ export default function Search({
    const [predictions, setPredictions] = useState<
       google.maps.places.AutocompleteSuggestion[]
    >([]);
-   const [isopen, setIsOpen] = useState(false);
-   //console.log(predictions.length > 0 ? "True" : "False");
 
    const handleUserInput = useCallback(
       debounce((input: string) => {

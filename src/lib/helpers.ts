@@ -4,10 +4,16 @@ export type Place = {
     rank: number;
 }
 
-export function debounce(func, timeout = 300){
-  let timer;
-  return (...args) => {
+
+// type debouncedInputProps = {
+//   func: (...args: any[]) => void;
+//   timeout?: number;
+// }
+
+export function debounce(func: (...args: any[]) => void, timeout = 300) {
+  let timer: NodeJS.Timeout | undefined;
+  return (...args: unknown[]) => {
     clearTimeout(timer);
-    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    timer = setTimeout(() => { func(...args); }, timeout);
   };
 }

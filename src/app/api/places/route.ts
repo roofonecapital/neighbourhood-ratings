@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-const PLACES_API_BASE_URL = "https://places.googleapis.com/v1"
-
 const placesApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
 
 export async function POST(request: Request) {

@@ -27,7 +27,6 @@ type RatingResultsProps = {
 export function RatingResults({
    userInput,
    rating,
-   ratingData,
    ratingDataArray,
 }: RatingResultsProps) {
    return (
