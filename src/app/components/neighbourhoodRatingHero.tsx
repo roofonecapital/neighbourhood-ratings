@@ -3,10 +3,15 @@ import { useState } from "react";
 import Search from "./search";
 import { RatingResults } from "./RatingResults";
 import { Loading } from "./Loading";
-import { copy } from "../page";
 import { PLACES } from "@/lib/places";
 import { Place } from "@/lib/helpers";
 import { PlacesApi } from "@/lib/placesApi";
+
+const copy = {
+   heroMain: "Discover the vibe before you move",
+   heroSubCopy:
+      "Find out what an area is like, what amenities are available and what people think of the area.",
+};
 
 export function NeigbourhoodRatingHero() {
    const [userInput, setUserInput] = useState<string>("");
