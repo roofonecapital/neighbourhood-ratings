@@ -10,10 +10,13 @@ export type Place = {
 //   timeout?: number;
 // }
 
-export function debounce(func: (...args: any[]) => void, timeout = 300) {
-  let timer: NodeJS.Timeout | undefined;
+// @ts-ignore
+export function debounce(func: Function, timeout = 300) {
+  let timer: ReturnType<typeof setTimeout>;
   return (...args: unknown[]) => {
     clearTimeout(timer);
-    timer = setTimeout(() => { func(...args); }, timeout);
+    timer = setTimeout(
+      () => { func(...args); }, timeout
+    );
   };
 }

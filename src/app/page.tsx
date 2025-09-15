@@ -1,4 +1,3 @@
-"use client";
 import { NeigbourhoodRatingHero } from "./components/neighbourhoodRatingHero";
 
 export const copy = {
