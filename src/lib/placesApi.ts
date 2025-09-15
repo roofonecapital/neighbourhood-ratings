@@ -4,7 +4,7 @@ export const PlacesApi = {
   request(
     method: RequestInit["method"],
       endpoint: string,
-      body?: Record<string, any>,
+      body?: Record<string, unknown>,
         fields?: Array<string>
     ) {
         const controller = new AbortController()
@@ -18,14 +18,14 @@ export const PlacesApi = {
         },
             body: body ? JSON.stringify(body) : null,
         })
-        
+
   },
 
   get(path: string) {
     return this.request("get", path);
   },
 
-    post(path: string, body?: Record<string, any>, fields?: Array<string>) {
+    post(path: string, body?: Record<string, unknown>, fields?: Array<string>) {
     return this.request("post", path, body, fields);
   },
 };

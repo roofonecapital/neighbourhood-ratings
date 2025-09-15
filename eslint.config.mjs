@@ -16,6 +16,7 @@ const eslintConfig = [
       'prefer-const': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/ban-ts-comment': 'warn',
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
     },
   }),
 ]
