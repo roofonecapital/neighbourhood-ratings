@@ -37,7 +37,7 @@ export function RatingResults({
             </h1>
          </div>
          <div className="flex flex-col gap-12 justify-center items-center">
-            <div className="flex flex-col sm:flex-row gap-96 justify-center items-center md:justify-start sm:justify-between md:items-start sm:items-center w-3/4 px-12">
+            <div className="flex flex-col sm:flex-row md:gap-96 justify-center items-center md:justify-start sm:justify-between md:items-start sm:items-center w-3/4 px-12">
                <div className="flex flex-col gap-1 justify-center items-center">
                   <p className="text-xl block">Neigborhood Rating</p>
                   <StarRating
