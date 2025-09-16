@@ -8,7 +8,7 @@ import { Place } from "@/lib/helpers";
 import { PlacesApi } from "@/lib/placesApi";
 
 const copy = {
-   heroMain: "Discover the vibe before you move",
+   heroMain: "Discover the vibe before you move.",
    heroSubCopy:
       "Find out what an area is like, what amenities are available and what people think of the area.",
 };
@@ -156,11 +156,11 @@ export function NeigbourhoodRatingHero() {
                <div className="bg-roofone-green-bg/30 h-screen flex flex-col items-center justify-center">
                   <div className="text-center">
                      <div className="px-12 lg:px-64">
-                        <h1 className="text-wrap text-3xl font-semibold tracking-tight text-gray-900 md:text-6xl">
+                        <h1 className="text-wrap text-2xl font-semibold tracking-tight text-gray-900 md:text-6xl">
                            {copy.heroMain}
                         </h1>
                      </div>
-                     <p className="mt-6 px-48 text-pretty text-md font-medium text-gray-500 md:mt-8 md:text-xl/8">
+                     <p className="mt-2 px-12 md:px-48 text-pretty text-sm font-medium text-gray-500 md:mt-8 md:text-xl/8">
                         {copy.heroSubCopy}
                      </p>
                      {/*Autocomplete search input */}

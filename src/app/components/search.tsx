@@ -65,14 +65,14 @@ export default function Search({
          <div className="flex flex-col items-center justify-center relative">
             <div className="flex justify-center mt-8">
                <Command
-                  className="rounded-lg border shadow-md w-[540px] bg-white"
+                  className="rounded-lg border shadow-md w-[340px] md:w-[540px] bg-white"
                   shouldFilter={false}
                >
                   <CommandInput
                      placeholder="Search by address or postcode"
                      defaultValue={userInput}
                      onValueChange={(v) => handleUserInput(v)}
-                     className="block w-[480px] h-[48px] -mr-16 text-base text-gray-900"
+                     className="block h-[48px] w-96 text-sm text-gray-900"
                   />
 
                   <CommandList
@@ -95,7 +95,7 @@ export default function Search({
                </Command>
                <button
                   type="button"
-                  className="rounded-r-lg h-[52px] -ml-48 w-48 bg-roofone-green-primary mt-[0.75px] px-4 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className="rounded-r-lg h-[52px] -ml-24 w-36 md:w-48 bg-roofone-green-primary mt-[0.75px] px-4 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                >
                   Calculate rating
                </button>
