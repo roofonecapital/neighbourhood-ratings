@@ -14,7 +14,7 @@ const copy = {
 };
 
 export function NeigbourhoodRatingHero() {
-   const [userInput, setUserInput] = useState<string>("");
+   const [userLocationInput, setuserLocationInput] = useState<string>("");
    const [isLoading, setIsLoading] = useState(false);
    const [rating, setRating] = useState<number | null>(null);
    const [ratingData, setRatingData] = useState<Record<string, number>>({});
@@ -56,7 +56,7 @@ export function NeigbourhoodRatingHero() {
    ];
 
    const handleCalculateRating = (placeId: string) => {
-      console.log("User input:", userInput);
+      console.log("User input:", userLocationInput);
       console.log("Rating results", ratingData);
       console.log("Rating score", rating);
       console.log("RatingDataArray", ratingDataArray);
@@ -165,8 +165,8 @@ export function NeigbourhoodRatingHero() {
                      </p>
                      {/*Autocomplete search input */}
                      <Search
-                        userInput={userInput}
-                        setUserInput={setUserInput}
+                        userLocationInput={userLocationInput}
+                        setuserLocationInput={setuserLocationInput}
                         handleGetSelectedPlaceRating={handleCalculateRating}
                      />
                   </div>
@@ -175,9 +175,8 @@ export function NeigbourhoodRatingHero() {
                {rating !== null && (
                   <div ref={(node) => node?.scrollIntoView()}>
                      <RatingResults
-                        userInput={userInput}
+                        userLocationInput={userLocationInput}
                         rating={rating}
-                        ratingData={ratingData}
                         ratingDataArray={ratingDataArray}
                      />
                   </div>
