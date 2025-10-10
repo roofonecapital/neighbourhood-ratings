@@ -4,6 +4,11 @@ export type Place = {
     rank: number;
 }
 
+export type QuickQuestion = {
+  text: string;
+  icon?: string;
+}
+
 export type RatingResultsProps = {
    userLocationInput?: string;
    rating: number;

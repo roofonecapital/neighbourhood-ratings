@@ -14,7 +14,8 @@ export async function POST(request: Request) {
       body: body ? JSON.stringify(body) : null,
     });
 
-    const data = await res.json()
+  const data = await res.json()
+  console.log("Places API response data:", data)
 
     return NextResponse.json(data)
 }

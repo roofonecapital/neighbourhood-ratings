@@ -1,6 +1,4 @@
 "use client";
-import { Chatbot } from "./chatbot";
-import { NeighborhoodAIOverview } from "./neighbourhoodAI";
 import PlaceCard from "./placeCard";
 import StarRating from "./rating";
 import { RatingResultsProps } from "@/lib/helpers";
@@ -55,8 +53,6 @@ export function RatingResults({
                </div>
             </div>
          </div>
-         <NeighborhoodAIOverview />
-         <Chatbot />
       </>
    );
 }
