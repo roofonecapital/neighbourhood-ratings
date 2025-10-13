@@ -1,23 +1,21 @@
 "use client";
 import { MessageCircle, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { QuickQuestion } from "@/lib/helpers";
 
 interface NeighborhoodAIOverviewProps {
-   onQuestionClick?: (question: string) => void;
-   quickQuestions?: QuickQuestion[];
+   // onQuestionClick?: (question: string) => void;
+   // quickQuestions?: QuickQuestion[];
    generatedSummary?: string;
 }
 
 export function NeighborhoodAIOverview({
-   onQuestionClick,
-   quickQuestions,
+   // quickQuestions,
    generatedSummary,
 }: NeighborhoodAIOverviewProps) {
-   const handleQuestionClick = (question: string) => {
-      console.log(question);
-   };
+   // const handleQuestionClick = (question: string) => {
+   //    console.log(question);
+   // };
 
    return (
       <>
@@ -50,7 +48,7 @@ export function NeighborhoodAIOverview({
                         <p className="text-gray-600 text-sm mb-4">
                            Our upcoming AI assistant will have detailed insights
                            about schools, amenities, transport, and local
-                           services. You'll be able to ask anything!
+                           services. You&apos;ll be able to ask anything!
                         </p>
                      </div>
                   </div>
