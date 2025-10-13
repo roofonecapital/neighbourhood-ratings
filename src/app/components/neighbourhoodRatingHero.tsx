@@ -4,10 +4,10 @@ import Search from "./search";
 import { RatingResults } from "./RatingResults";
 import { Loading } from "./Loading";
 import { PLACES } from "@/lib/places";
-import { Place, RatingResultsProps } from "@/lib/helpers";
+import { Place } from "@/lib/helpers";
 import { PlacesApi } from "@/lib/placesApi";
 import { NeighborhoodAIOverview } from "./neighbourhoodAI";
-import { Chatbot } from "./chatbot";
+//import { Chatbot } from "./chatbot";
 import { QuickQuestion } from "@/lib/helpers";
 
 const copy = {
@@ -16,14 +16,14 @@ const copy = {
       "Find out what an area is like, what amenities are available and what people think of the area.",
 };
 
-export const quickQuestions: QuickQuestion[] = [
-   { text: "What schools are nearby?" },
-   { text: "What gyms are nearby?" },
-   { text: "Tell me about transport links" },
-   { text: "What restaurants are in the area?" },
-   { text: "How safe is this neighborhood?" },
-   { text: "What healthcare facilities are close?" },
-];
+// export const quickQuestions: QuickQuestion[] = [
+//    { text: "What schools are nearby?" },
+//    { text: "What gyms are nearby?" },
+//    { text: "Tell me about transport links" },
+//    { text: "What restaurants are in the area?" },
+//    { text: "How safe is this neighborhood?" },
+//    { text: "What healthcare facilities are close?" },
+// ];
 
 export function NeigbourhoodRatingHero() {
    const [userLocationInput, setuserLocationInput] = useState<string>("");
@@ -219,7 +219,7 @@ export function NeigbourhoodRatingHero() {
                      />
                      <NeighborhoodAIOverview
                         generatedSummary={aiOverview}
-                        quickQuestions={quickQuestions}
+                        // quickQuestions={quickQuestions}
                      />
                      {/* <Chatbot /> */}
                   </div>
