@@ -48,16 +48,16 @@ export function NeighborhoodAIOverview({
                            Have questions about this area?
                         </h3>
                         <p className="text-gray-600 text-sm mb-4">
-                           Our AI assistant has detailed insights about schools,
-                           amenities, transport, and local services. Ask
-                           anything!
+                           Our upcoming AI assistant will have detailed insights
+                           about schools, amenities, transport, and local
+                           services. You'll be able to ask anything!
                         </p>
                      </div>
                   </div>
                </div>
 
                {/* Quick Questions */}
-               <div>
+               {/* <div>
                   <p className="font-medium mb-4 text-gray-700">
                      Quick questions to get started:
                   </p>
@@ -73,15 +73,15 @@ export function NeighborhoodAIOverview({
                         </Button>
                      ))}
                   </div>
-               </div>
+               </div> */}
 
                {/* Bottom hint */}
-               <div className="mt-6 pt-6 border-t border-gray-200">
+               {/* <div className="mt-6 pt-6 border-t border-gray-200">
                   <p className="text-sm text-gray-500 text-center">
                      💬 Click any question or use the chat button in the bottom
                      right to start a conversation
                   </p>
-               </div>
+               </div> */}
             </Card>
          </div>
       </>

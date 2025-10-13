@@ -221,7 +221,7 @@ export function NeigbourhoodRatingHero() {
                         generatedSummary={aiOverview}
                         quickQuestions={quickQuestions}
                      />
-                     <Chatbot />
+                     {/* <Chatbot /> */}
                   </div>
                )}
             </>
