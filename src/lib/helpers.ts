@@ -4,6 +4,31 @@ export type Place = {
     rank: number;
 }
 
+export type QuickQuestion = {
+  text: string;
+  icon?: string;
+}
+
+export type RatingResultsProps = {
+   userLocationInput?: string;
+   rating: number;
+   ratingDataArray?: {
+      name: string;
+      image: string;
+      places: Partial<{
+         school: number;
+         gym: number;
+         hospital: number;
+         pharmacy: number;
+         spa: number;
+         bank: number;
+         atm: number;
+         restuarant: number;
+         bar: number;
+         supermarket: number;
+      }>[];
+   }[];
+};
 
 // type debouncedInputProps = {
 //   func: (...args: any[]) => void;

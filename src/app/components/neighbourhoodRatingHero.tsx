@@ -4,8 +4,11 @@ import Search from "./search";
 import { RatingResults } from "./RatingResults";
 import { Loading } from "./Loading";
 import { PLACES } from "@/lib/places";
-import { Place } from "@/lib/helpers";
+import { Place, RatingResultsProps } from "@/lib/helpers";
 import { PlacesApi } from "@/lib/placesApi";
+import { NeighborhoodAIOverview } from "./neighbourhoodAI";
+import { Chatbot } from "./chatbot";
+import { QuickQuestion } from "@/lib/helpers";
 
 const copy = {
    heroMain: "Discover the vibe before you move.",
@@ -13,11 +16,21 @@ const copy = {
       "Find out what an area is like, what amenities are available and what people think of the area.",
 };
 
+export const quickQuestions: QuickQuestion[] = [
+   { text: "What schools are nearby?" },
+   { text: "What gyms are nearby?" },
+   { text: "Tell me about transport links" },
+   { text: "What restaurants are in the area?" },
+   { text: "How safe is this neighborhood?" },
+   { text: "What healthcare facilities are close?" },
+];
+
 export function NeigbourhoodRatingHero() {
-   const [userInput, setUserInput] = useState<string>("");
+   const [userLocationInput, setuserLocationInput] = useState<string>("");
    const [isLoading, setIsLoading] = useState(false);
    const [rating, setRating] = useState<number | null>(null);
    const [ratingData, setRatingData] = useState<Record<string, number>>({});
+   const [aiOverview, setAiOverview] = useState<string>("");
 
    const ratingDataArray = [
       {
@@ -56,10 +69,6 @@ export function NeigbourhoodRatingHero() {
    ];
 
    const handleCalculateRating = (placeId: string) => {
-      console.log("User input:", userInput);
-      console.log("Rating results", ratingData);
-      console.log("Rating score", rating);
-      console.log("RatingDataArray", ratingDataArray);
       async function getPlaceDetails(placeId: string) {
          setIsLoading(true);
          try {
@@ -68,13 +77,11 @@ export function NeigbourhoodRatingHero() {
             );
             const data = await res.json();
             if (!res.ok) throw new Error("Failed to get place details");
-            //console.log("Received place details:", data);
 
             const RatingInfo = await calculatePlaceRating(data.location);
-
+            generateAIOverview(RatingInfo.starRating, RatingInfo.placeInfo);
             setRating(RatingInfo.starRating);
             setRatingData(RatingInfo.placeInfo);
-            setIsLoading(false);
          } catch (error) {
             setIsLoading(false);
             console.log(error);
@@ -111,8 +118,6 @@ export function NeigbourhoodRatingHero() {
       const ratingScore = (placesScore / maxScore) * 100;
       const starRating = ratingScore / 20;
 
-      console.log("Ratings", starRating);
-
       return { starRating, placeInfo };
    };
 
@@ -139,6 +144,7 @@ export function NeigbourhoodRatingHero() {
          "places.primaryType",
       ]);
       const data = await res.json();
+      console.log("Places API response data:", data);
 
       return {
          name: place.name,
@@ -146,6 +152,38 @@ export function NeigbourhoodRatingHero() {
          count: data.places?.length,
       };
    }
+
+   const generateAIOverview = async (
+      rating: number,
+      placeInfo: Record<string, number>
+   ) => {
+      // Example prompt
+      const prompt = `Provide a detailed overview and reasoning of the neighborhood around ${userLocationInput}. The area has a rating of ${rating} (briefly justify this based on the place amenities available) stars based on the following number of amenities within a 1500km radius: ${JSON.stringify(
+         placeInfo
+      )}. Include information about which schools, healthcare, banks, food, and shopping options (include names). Highlight any notable features or characteristics of the area. Use a friendly and informative tone. Also, consider including information from local reviews (cite the source in parenthesis) and social media to provide a well-rounded perspective. Make the overview engaging and useful for someone considering moving to this neighborhood. Keep it concise, around 50-100 words maximum. Include any relevant statistics or data points that can help illustrate the quality of life in the area and crime levels (include the source for crime rate).`;
+
+      try {
+         const res = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt }),
+         });
+
+         const data = await res.json();
+         if (!res.ok)
+            throw new Error(data.error || "Failed to generate overview");
+         setAiOverview(data.text || "No overview generated");
+         setIsLoading(false);
+      } catch (error) {
+         return "Unable to generate overview at this time.";
+      }
+   };
+
+   /* AI chatbot api logic 
+   - 
+   */
 
    return (
       <>
@@ -165,8 +203,8 @@ export function NeigbourhoodRatingHero() {
                      </p>
                      {/*Autocomplete search input */}
                      <Search
-                        userInput={userInput}
-                        setUserInput={setUserInput}
+                        userLocationInput={userLocationInput}
+                        setuserLocationInput={setuserLocationInput}
                         handleGetSelectedPlaceRating={handleCalculateRating}
                      />
                   </div>
@@ -175,11 +213,15 @@ export function NeigbourhoodRatingHero() {
                {rating !== null && (
                   <div ref={(node) => node?.scrollIntoView()}>
                      <RatingResults
-                        userInput={userInput}
+                        userLocationInput={userLocationInput}
                         rating={rating}
-                        ratingData={ratingData}
                         ratingDataArray={ratingDataArray}
                      />
+                     <NeighborhoodAIOverview
+                        generatedSummary={aiOverview}
+                        quickQuestions={quickQuestions}
+                     />
+                     {/* <Chatbot /> */}
                   </div>
                )}
             </>

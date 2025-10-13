@@ -13,23 +13,23 @@ import { PlacesApi } from "../../lib/placesApi";
 import { debounce } from "@/lib/helpers";
 
 type SearchInputProps = {
-   userInput: string;
-   setUserInput: (userInput: string) => void;
+   userLocationInput: string;
+   setuserLocationInput: (userLocationInput: string) => void;
    handleGetSelectedPlaceRating: (placeId: string) => void;
 };
 
 export default function Search({
-   userInput,
-   setUserInput,
+   userLocationInput,
+   setuserLocationInput,
    handleGetSelectedPlaceRating,
 }: SearchInputProps) {
    const [predictions, setPredictions] = useState<
       google.maps.places.AutocompleteSuggestion[]
    >([]);
 
-   const handleUserInput = useCallback(
+   const handleuserLocationInput = useCallback(
       debounce((input: string) => {
-         setUserInput(input);
+         setuserLocationInput(input);
          fetchPredictions(input);
       }, 1000),
       []
@@ -56,7 +56,7 @@ export default function Search({
       const selectedInput = predictions.filter(
          (prediction) => prediction.placePrediction?.placeId === placeId
       );
-      setUserInput(String(selectedInput[0].placePrediction?.text.text));
+      setuserLocationInput(String(selectedInput[0].placePrediction?.text.text));
       handleGetSelectedPlaceRating(placeId);
    };
 
@@ -70,8 +70,8 @@ export default function Search({
                >
                   <CommandInput
                      placeholder="Search by address or postcode"
-                     defaultValue={userInput}
-                     onValueChange={(v) => handleUserInput(v)}
+                     defaultValue={userLocationInput}
+                     onValueChange={(v) => handleuserLocationInput(v)}
                      className="block h-[48px] w-96 text-xs text-gray-900"
                   />
 

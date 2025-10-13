@@ -1,31 +1,10 @@
 "use client";
 import PlaceCard from "./placeCard";
 import StarRating from "./rating";
-
-type RatingResultsProps = {
-   userInput?: string;
-   rating: number;
-   ratingData: Record<string, number>;
-   ratingDataArray?: {
-      name: string;
-      image: string;
-      places: Partial<{
-         school: number;
-         gym: number;
-         hospital: number;
-         pharmacy: number;
-         spa: number;
-         bank: number;
-         atm: number;
-         restuarant: number;
-         bar: number;
-         supermarket: number;
-      }>[];
-   }[];
-};
+import { RatingResultsProps } from "@/lib/helpers";
 
 export function RatingResults({
-   userInput,
+   userLocationInput,
    rating,
    ratingDataArray,
 }: RatingResultsProps) {
@@ -33,7 +12,7 @@ export function RatingResults({
       <>
          <div className="text-center p-5">
             <h1 className="text-xl sm:text-2xl">
-               This is the vibe around {userInput} currently 😎.
+               This is the vibe around {userLocationInput} currently 😎.
             </h1>
          </div>
          <div className="flex flex-col gap-12 justify-center items-center">

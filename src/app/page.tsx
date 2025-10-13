@@ -1,9 +1,10 @@
+import Navbar from "./components/navbar";
 import { NeigbourhoodRatingHero } from "./components/neighbourhoodRatingHero";
 
 export default function Page() {
    return (
       <>
-         {/* Navbar */}
+         <Navbar />
          <NeigbourhoodRatingHero />
          {/* Rating results */}
       </>

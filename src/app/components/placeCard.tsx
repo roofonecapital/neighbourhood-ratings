@@ -17,7 +17,6 @@ type ratingDataArray = {
    name: string;
    image: string;
    places: Partial<Place>[];
-   ratingData?: Record<string, number>;
 };
 
 export default function PlaceCard({ name, image, places }: ratingDataArray) {
