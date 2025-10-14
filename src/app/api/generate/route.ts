@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const { prompt } = await req.json();
   // return error if OpenAI key missing
   if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ error: "Missing OPENAI_API_KEY" }, { status: 500 });
+    return NextResponse.json({ error: "Missing openai key" }, { status: 500 });
   }
 
   //llm integration
