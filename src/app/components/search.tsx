@@ -36,6 +36,7 @@ export default function Search({
    );
 
    async function fetchPredictions(input: string) {
+      console.log("Hello fetchPredictions");
       const queryBody = {
          input: input,
          includedRegionCodes: ["uk"],

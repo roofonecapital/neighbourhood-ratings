@@ -144,7 +144,6 @@ export function NeigbourhoodRatingHero() {
          "places.primaryType",
       ]);
       const data = await res.json();
-      console.log("Places API response data:", data);
 
       return {
          name: place.name,
