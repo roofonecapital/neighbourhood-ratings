@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
 
 const placesApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
 
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     });
 
   const data = await res.json()
-  console.log("Places API response data:", data)
 
     return NextResponse.json(data)
 }
+

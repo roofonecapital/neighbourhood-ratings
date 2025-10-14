@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: Request) {
 
   const { prompt } = await req.json();
   // return error if OpenAI key missing
-  if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
-    return NextResponse.json({ error: "Missing OPENAI_API_KEY" }, { status: 500 });
+  if (!process.env.OPENAI_API_KEY) {
+    return NextResponse.json({ error: "Missing openai key" }, { status: 500 });
   }
 
   //llm integration
@@ -23,5 +23,4 @@ export async function POST(req: Request) {
   })
 
   return NextResponse.json({ text: response.choices[0].message.content });
-  // return NextResponse.json({ message: "Hello from the Generate API" });
 }
